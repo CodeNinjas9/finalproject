@@ -4,13 +4,22 @@ using UnityEngine;
 
 public class NeuralNetwork : MonoBehaviour
 {
-    float[] bias;
-    int length;
-    float[] weights;
-    float[] features;
+    public float[] bias;
+    public int length;
+    public float[] weights;
+    public float[] features;
+    public float output; 
+    public float learning_rate;
+    public int iteration;
     void Start()
     {
-
+        for(int i = 0; i < iteration; i++){
+            Forward_Propgation();
+            print("Connection of the Neural Network is" + features[length - 1]);
+            Backpropgation(output, learning_rate);
+            Forward_Propgation();
+            print("Network after Backpropgation is" + features[length - 1]);
+        }
     }
     void Update()
     {
@@ -32,7 +41,7 @@ public class NeuralNetwork : MonoBehaviour
     void Backpropgation(float output, float learning_rate)
     {
         int next = 0;
-        for(int i = 0; i < length; i++)
+        for(int i = 0; i < length - 1; i++)
         {
             float loss = cross_entropy_loss(features[next], output);
             float delta = loss/output;
