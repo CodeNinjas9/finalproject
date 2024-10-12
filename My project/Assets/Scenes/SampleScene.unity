@@ -373,9 +373,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   base_exp: 2
-  array: []
+  map:
+  - Lava
+  - Water
+  - Stone
   length: 2000
-  iteration: 3
+  iteration: 5
 --- !u!4 &1587639655
 Transform:
   m_ObjectHideFlags: 0
