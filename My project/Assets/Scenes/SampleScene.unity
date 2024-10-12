@@ -377,7 +377,7 @@ MonoBehaviour:
   - Lava
   - Water
   - Stone
-  length: 2000
+  length: 5
   iteration: 5
 --- !u!4 &1587639655
 Transform:
