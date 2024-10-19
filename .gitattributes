@@ -3808,4 +3808,6 @@
 /My[[:space:]]project/Library/Artifacts/e6/e69aad797707bb399d558adf1a490003 filter=lfs diff=lfs merge=lfs -text
 /My[[:space:]]project/Library/Artifacts/f5/f5d869a4a0536b0484cfc8fda8f5b2e8 filter=lfs diff=lfs merge=lfs -text
 *.pref filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/5c/5c4ac57830b0af41588173e40e1fce04 filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/89/89947ffe049e299e749f34c065d70bbb filter=lfs diff=lfs merge=lfs -text
 * !text !filter !merge !diff

@@ -13,18 +13,10 @@ public class NeuralNetwork : MonoBehaviour
     public float output; 
     public float learning_rate;
     public int iteration;
-    
-
-
-    float Relu(float x)
+    public void Start()
     {
-       return Mathf.Max(0f, x); 
-    }
-    void Start()
-    {
-        features[0] = features[0] + gaussian_noise(Random.Range(0.001f, 1f), Random.Range(0.100f, 1f), Random.Range(0.11f, 1.11f));
         for(int i = 0; i < iteration; i++){
-            
+            features[0] = features[0] + gaussian_noise(Random.Range(0.001f, 1f), Random.Range(0.100f, 1f), Random.Range(0.11f, 1.11f));
             Forward_Propgation();
             print("Connection of the Neural Network is" + features[length - 1]);
             Backpropgation(output, learning_rate);
@@ -32,11 +24,11 @@ public class NeuralNetwork : MonoBehaviour
             print("Network after Backpropgation is" + features[length - 1]);
         }
     }
-    void Update()
+    public void Update()
     {
 
     }
-    void Forward_Propgation()
+    public void Forward_Propgation()
     {
         int next;
         for(int i = 0; i < length - 1; i++)
@@ -45,11 +37,11 @@ public class NeuralNetwork : MonoBehaviour
             features[next] = weights[i] * features[i] + bias[i];
         } 
     }
-    float cross_entropy_loss(float x, float output)
+    public float cross_entropy_loss(float x, float output)
     {
         return Mathf.Log(output - x);
     }
-    void Backpropgation(float output, float learning_rate)
+    public void Backpropgation(float output, float learning_rate)
     {
         int next = 0;
         for(int i = 0; i < length - 1; i++)
@@ -61,7 +53,7 @@ public class NeuralNetwork : MonoBehaviour
         }
     }
     //Added gaussian_noise!
-    float gaussian_noise(float std_devi, float mean_grey, float grey)
+    public float gaussian_noise(float std_devi, float mean_grey, float grey)
     {
         return (1/(std_devi * (2 * pi))) * Mathf.Pow(e, Mathf.Pow(grey - mean_grey, 2)/Mathf.Pow(2 * std_devi, 2));
     }
