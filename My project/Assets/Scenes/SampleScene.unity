@@ -340,8 +340,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bias:
   - 1
-  - 5
   - 1
+  - 5
   - 9
   - 2
   length: 5
@@ -358,8 +358,8 @@ MonoBehaviour:
   - 0
   - 0
   output: 5
-  learning_rate: 2
-  iteration: 3
+  learning_rate: 0.5
+  iteration: 5
 --- !u!114 &1587639654
 MonoBehaviour:
   m_ObjectHideFlags: 0
