@@ -358,8 +358,8 @@ MonoBehaviour:
   - 0
   - 0
   output: 5
-  learning_rate: 0.5
-  iteration: 5
+  learning_rate: 1.5
+  iteration: 10
 --- !u!114 &1587639654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,13 +372,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c266f38ca7f495f4d8efc9753f4ad7a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  seed: 0
   base_exp: 2
   map:
   - Lava
   - Water
   - Stone
-  length: 5
-  iteration: 5
+  length: 3
+  iteration: 3
 --- !u!4 &1587639655
 Transform:
   m_ObjectHideFlags: 0
