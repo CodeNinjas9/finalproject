@@ -410,9 +410,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   discrimantor: {fileID: 0}
   candidate_generator: {fileID: 0}
-  iterations: 0
-  data_set: []
-  length: 0
+  iterations: 2
+  data_set:
+  - 2
+  - 2
+  - 3
+  - 4
+  - 1
+  gaussian_set:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  length: 5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -15,8 +15,8 @@ public class NeuralNetwork : MonoBehaviour
     public int iteration;
     public void Start()
     {
+        features[0] = features[0] + gaussian_noise(Random.Range(0.001f, 1f), Random.Range(0.100f, 1f), Random.Range(0.11f, 1.11f));
         for(int i = 0; i < iteration; i++){
-            features[0] = features[0] + gaussian_noise(Random.Range(0.001f, 1f), Random.Range(0.100f, 1f), Random.Range(0.11f, 1.11f));
             Forward_Propgation();
             print("Connection of the Neural Network is" + features[length - 1]);
             Backpropgation(output, learning_rate);
