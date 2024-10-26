@@ -6217,4 +6217,8 @@
 /My[[:space:]]project/Library/Artifacts/ff/ffba94437fafd4e9c617918c083a1b37 filter=lfs diff=lfs merge=lfs -text
 /My[[:space:]]project/Library/Artifacts/ff/ffbb7f90140edf96a257a36b2594114a filter=lfs diff=lfs merge=lfs -text
 /My[[:space:]]project/Library/Artifacts/ff/fff68d07318c3c9b0cc82dcc72ac0ccf filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/08/0811f0fca785740eaeee43ba233b6149 filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/1a/1adeeb9ad47beca4ba5ee03b9aff209a filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/21/2123ca2937c9aba753606fad1cfd45f7 filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/65/65d547e312be7a67ff99218e9ca70f95 filter=lfs diff=lfs merge=lfs -text
 * !text !filter !merge !diff

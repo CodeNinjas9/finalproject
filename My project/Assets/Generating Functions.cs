@@ -12,9 +12,7 @@ public class NewBehaviourScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        seed = Random.Range(1f, Mathf.Pow(2f, 10f));
-        base_exp = Mathf.Log(seed);
-        for(int i = 0; i < iteration; i++)
+        for(int i = 1; i < iteration; i++)
         {
             print("Generating function has been solved" + solve_generating_functions(iteration));
         }

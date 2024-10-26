@@ -18,7 +18,7 @@ public class GenerativeAdversialNetwork : MonoBehaviour
         float std_devi = find_standardDeviation(data_set, length, mean);
         for(int i = 0; i < length; i++)
         {
-            gaussian_set[i] = gaussian_distrubtion(i, mean, std_devi);
+            gaussian_set[i] = gaussian_distrubtion(data_set[i], mean, std_devi);
         }
     }
     float find_mean(float[] array, int length)
@@ -53,21 +53,21 @@ public class GenerativeAdversialNetwork : MonoBehaviour
     {
         
     }
-    float entropy_loss_output_calcluator(float network_output)
+    float entropy_loss_output_calcluator(float network_output, float output)
     {
-        return Mathf.Log(network_output - shannon_information());
+        return Mathf.Log(network_output - output);
     }
     float gradient_ascent(float weight, float output, float network_output, float learning_rate)
     {
         float delta;
-        delta = entropy_loss_output_calcluator(network_output);
+        delta = entropy_loss_output_calcluator(network_output, output);
         weight = weight + learning_rate * delta/output;
         return weight;
     }
     float gradient_descent(float weight, float output, float network_output, float learning_rate)
     {
         float delta;
-        delta = entropy_loss_output_calcluator(network_output);
+        delta = entropy_loss_output_calcluator(network_output, output);
         weight = weight - learning_rate * delta/output;
         return weight;
     }
