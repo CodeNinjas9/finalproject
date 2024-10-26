@@ -354,7 +354,9 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.49f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/Generating Functions.cs"
 "Assets/GenerativeAdversialNetwork.cs"
+"Assets/InformationTheory.cs"
 "Assets/NeuralNetwork.cs"
+"Assets/Rendering.cs"
 -langversion:9.0
 /deterministic
 /optimize+
