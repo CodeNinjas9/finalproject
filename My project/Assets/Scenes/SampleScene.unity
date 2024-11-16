@@ -319,6 +319,7 @@ GameObject:
   - component: {fileID: 1141724899}
   - component: {fileID: 1141724897}
   - component: {fileID: 1141724895}
+  - component: {fileID: 1141724900}
   m_Layer: 0
   m_Name: Object (1)
   m_TagString: Untagged
@@ -400,6 +401,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1141724900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1141724894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d14f0c5ef06f9e45a9a05eb6bc8058f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meshFilters: []
+  blockRendering:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
 --- !u!1 &1587639652
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,10 +440,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1587639655}
-  - component: {fileID: 1587639654}
   - component: {fileID: 1587639653}
   - component: {fileID: 1587639657}
   - component: {fileID: 1587639658}
+  - component: {fileID: 1587639659}
   m_Layer: 0
   m_Name: Object
   m_TagString: Untagged
@@ -454,26 +485,6 @@ MonoBehaviour:
   output: 5
   learning_rate: 2
   iteration: 10
---- !u!114 &1587639654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1587639652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c266f38ca7f495f4d8efc9753f4ad7a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  seed: 0
-  base_exp: 2
-  map:
-  - Lava
-  - Water
-  - Stone
-  length: 3
-  iteration: 3
 --- !u!4 &1587639655
 Transform:
   m_ObjectHideFlags: 0
@@ -518,6 +529,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d14f0c5ef06f9e45a9a05eb6bc8058f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshFilters: []
+  blockRendering:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
+--- !u!114 &1587639659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587639652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2744fa527f027504fa1ab2d76a69c05e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  mininum: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
