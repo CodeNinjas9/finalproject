@@ -28,6 +28,10 @@ public class NeuralNetwork : MonoBehaviour
     {
 
     }
+    public float sigmoid(float x)
+    {
+        return (1/1 + Mathf.Exp(-x));
+    }
     public void Forward_Propgation()
     {
         int next;
@@ -46,7 +50,7 @@ public class NeuralNetwork : MonoBehaviour
         int next = 0;
         for(int i = 0; i < length - 1; i++)
         {
-            float loss = cross_entropy_loss(features[next], output);
+            float loss = cross_entropy_loss(sigmoid(features[next]), output);
             float delta = loss/output;
             weights[i] = weights[i] - learning_rate * delta;
             bias[i] = bias[i] - learning_rate * delta;
