@@ -4,75 +4,86 @@ using UnityEngine;
 
 public class Rendering : MonoBehaviour
 {
-    public Mesh[] meshFilters; 
+    public MeshFilter[] meshFilters; 
+    public int length;
+    public int[] generationId;
+    public Vector3 cameraposition;
+    public MeshFilter a;
+    public MeshFilter ano;
     CombineInstance[] combine;
-    public Matrix4x4 blockRendering;
     // Start is called before the first frame update
     void Start()
     {
-        
+        a.mesh = Combining_Meshes(length, 2, 3);
+        a.mesh = RenderLowerDetails(a.mesh, 1, 5);
+        a.mesh = CameraFacing(cameraposition, 6, a.mesh, 1, 1, 1);
+        ano.mesh = CameraFacing(cameraposition, 6, a.mesh, 1, 1, 1);
     }
-    Matrix4x4 createBlocks(Matrix4x4 blockRendering, int xtime_step, int ztime_step)
-    {
-        switch(blockRendering[13] % xtime_step == 0, blockRendering[33] % ztime_step == 0){
-            case (true, false):
-                blockRendering[33] += 1;
-                blockRendering[13] = 0;
-                break;
-            case (false, true):
-                blockRendering[23] += 1;
-                blockRendering[33] = 0;
-                break;
-        }
-        return blockRendering;
-    }
-    Mesh Combining_Meshes(int lenght, int xtime_step, int ytime_step)
+    Mesh Combining_Meshes(int lenght, int xtime_step, int ztime_step)
     {
         combine = new CombineInstance[lenght];
         for(int i = 0; i < lenght; i++)
         {
-            combine[i].mesh = meshFilters[i];
-            combine[i].transform = createBlocks(blockRendering, 10, 10);
+            combine[i].mesh = meshFilters[i].mesh;
+            if(i % xtime_step == 0){
+                meshFilters[i].transform.position += new Vector3(0, 0, -1);
+                combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+                continue;
+            }
+            if(i % ztime_step == 0)
+            {
+                meshFilters[i].transform.position += new Vector3(0, 1, 0);
+                combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+                continue;
+            }
+            meshFilters[i].transform.position += new Vector3(-1, -1, -1);
         }
         Mesh mesh = new Mesh();
         mesh.CombineMeshes(combine);
         return mesh;
     }
-    void CameraFacing(Vector3 cameraPos, int len, Mesh mesh)
+    Mesh CameraFacing(Vector3 cameraPos, int len, Mesh mesh, int boundX, int boundY, int boundZ)
     {
+        Vector3[] vert = new Vector3[len];
+        Vector3[] normals = new Vector3[len];
+        int[] triangles = new int[len];
         for(int i = 0; i < len; i++)
         {
-            switch(cameraPos.x > 0 && mesh.vertices[i].x > 0, cameraPos.y > 0 && mesh.vertices[i].y > 0, cameraPos.z > 0 && mesh.vertices[i].z > 0)
+            switch(cameraPos.z - mesh.vertices[i].z < boundZ || cameraPos.x - mesh.vertices[i].z < boundX || cameraPos.y - mesh.vertices[i].y < boundY)
             {
-                case (true, true, true):
+                case true:
+                    print("Friendly debug" + i + "delta" + (cameraPos.z - mesh.vertices[i].z));
+                    vert[i] = mesh.vertices[i];
+                    normals[i] = mesh.normals[i];
+                    triangles[i] = mesh.triangles[i];
                     break;
-                case (true, false, false):
-                    mesh.vertices[i] = Vector3.zero;
-                    break;
-                case (false, true, true):
-                    break;
-                case (true, true, false):
-                    mesh.vertices[i] = Vector3.zero;
-                    break;
-                case (true, false, true):
-                    mesh.vertices[i] = Vector3.zero;
+                case false:
+                    print("False debug" + i + "delta" + (cameraPos.z - mesh.vertices[i].z));
                     break;
             }
         }
+        mesh.Clear();
+        mesh.triangles = triangles;
+        mesh.vertices = vert;
+        mesh.normals = normals;
+        return mesh;
     }
-    void RenderLowerDetails(Mesh mesh, int time_step)
+    Mesh RenderLowerDetails(Mesh mesh, int time_step, int a_length)
     {
-        int i = 1;
-        while(mesh.vertices[i] != null && mesh.normals[i] != null)
+        for(int i = 1; i < a_length; i+=time_step)
         {
             int prev = (i - time_step);
+            print("Before" + mesh.vertices[i]);
+            print("Before" + mesh.normals[i]);
             mesh.vertices[i] += mesh.vertices[prev];
             mesh.normals[i] += mesh.normals[prev];
+            print("After" + mesh.vertices[i]);
+            print("After" + mesh.normals[i]);
             mesh.vertices[prev] = Vector3.zero;
             mesh.normals[prev] = Vector3.zero;
-            i += time_step;
         }
         mesh.RecalculateBounds();
+        return mesh;
     }
 }
 
