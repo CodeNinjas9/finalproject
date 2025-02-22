@@ -52,13 +52,11 @@ public class Rendering : MonoBehaviour
             switch(cameraPos.z - mesh.vertices[i].z < boundZ || cameraPos.x - mesh.vertices[i].z < boundX || cameraPos.y - mesh.vertices[i].y < boundY)
             {
                 case true:
-                    print("Friendly debug" + i + "delta" + (cameraPos.z - mesh.vertices[i].z));
                     vert[i] = mesh.vertices[i];
                     normals[i] = mesh.normals[i];
                     triangles[i] = mesh.triangles[i];
                     break;
                 case false:
-                    print("False debug" + i + "delta" + (cameraPos.z - mesh.vertices[i].z));
                     break;
             }
         }
@@ -73,12 +71,8 @@ public class Rendering : MonoBehaviour
         for(int i = 1; i < a_length; i+=time_step)
         {
             int prev = (i - time_step);
-            print("Before" + mesh.vertices[i]);
-            print("Before" + mesh.normals[i]);
             mesh.vertices[i] += mesh.vertices[prev];
             mesh.normals[i] += mesh.normals[prev];
-            print("After" + mesh.vertices[i]);
-            print("After" + mesh.normals[i]);
             mesh.vertices[prev] = Vector3.zero;
             mesh.normals[prev] = Vector3.zero;
         }
