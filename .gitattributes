@@ -6224,4 +6224,11 @@
 /My[[:space:]]project/Library/Artifacts/49/492fa793c97add0438857cee8e8883ba filter=lfs diff=lfs merge=lfs -text
 /My[[:space:]]project/Library/Artifacts/5d/5d10664e13a2e13177cd818d50238a32 filter=lfs diff=lfs merge=lfs -text
 *.py filter=lfs diff=lfs merge=lfs -text
+*.apiupaterconfigs filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/64/64717438ce2147984b4161d9250dc22a filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/73/7344bf4a9ea3163f823120fff1337e64 filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/79/799668d2765aa4aa08de2a33c742663f filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/8a/8a3abe919eab5568d857fead239ac5f5 filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/94/94474579a7dabbb7cb2d8e5992fce75f filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/dc/dc21b5516989ea4df69762dce5cfac66 filter=lfs diff=lfs merge=lfs -text
 * !text !filter !merge !diff

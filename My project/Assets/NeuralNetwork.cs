@@ -24,6 +24,12 @@ public class NeuralNetwork : MonoBehaviour
             print("Network after Backpropgation is" + features[length - 1]);
         }
     }
+    public void Forward_Propgation(){
+        for(int i = 1; i <= length; i++){
+            features[i] = weights[i - 1] * features[i - 1] + bias[i - 1];
+        }
+        return;
+    }
     public float cross_entropy_loss(float x, float output)
     {
         return Mathf.Log(output - x);
@@ -33,7 +39,7 @@ public class NeuralNetwork : MonoBehaviour
         int next = 0;
         for(int i = 0; i < length - 1; i++)
         {
-            float loss = cross_entropy_loss(sigmoid(features[next]), output);
+            float loss = cross_entropy_loss(features[next], output);
             float delta = loss/output;
             weights[i] = weights[i] - learning_rate * delta;
             bias[i] = bias[i] - learning_rate * delta;

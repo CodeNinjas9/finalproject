@@ -1,0 +1,102 @@
+{
+    "m_Version": "1.0.0",
+    "m_InspectorName": "",
+    "m_InspectorDisplayName": "PlayerControls",
+    "m_Actions": [
+      {
+        "m_Name": "Move",
+        "m_InputBinding": [
+          {
+            "m_Name": "Move",
+            "m_Binding": "W",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          },
+          {
+            "m_Name": "Move",
+            "m_Binding": "S",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          },
+          {
+            "m_Name": "Move",
+            "m_Binding": "A",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          },
+          {
+            "m_Name": "Move",
+            "m_Binding": "D",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          },
+          {
+            "m_Name": "Attack",
+            "m_Binding": "RightClick",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          },
+          {
+            "m_Name": "PlaceBlock",
+            "m_Binding": "LeftClick",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          },
+          {
+            "m_Name": "Sprint",
+            "m_Binding": "LeftShift",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          }
+        ]
+      },
+      {
+        "m_Name": "Jump",
+        "m_InputBinding": [
+          {
+            "m_Name": "Jump",
+            "m_Binding": "Space",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          }
+        ]
+      },
+      {
+        "m_Name": "Use",
+        "m_InputBinding": [
+          {
+            "m_Name": "Use",
+            "m_Binding": "E",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          }
+        ]
+      }
+      {
+        "m_Name": "Attack",
+        "m_InputBinding": [
+          {
+            "m_Name": "Attack",
+            "m_Binding": "E",
+            "m_ControlScheme": "Keyboard",
+            "m_Type": "Button"
+          }
+        ]
+      }
+    ],
+    "m_ControlSchemes": [
+      {
+        "m_Name": "Computer",
+        "m_Devices": [
+          "Keyboard",
+          "Mouse"
+        ]
+      },
+      {
+        "m_Name": "Gamepad",
+        "m_Devices": [
+          "Gamepad"
+        ]
+      }
+    ]
+  }
