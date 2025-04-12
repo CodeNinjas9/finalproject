@@ -6231,4 +6231,5 @@
 /My[[:space:]]project/Library/Artifacts/8a/8a3abe919eab5568d857fead239ac5f5 filter=lfs diff=lfs merge=lfs -text
 /My[[:space:]]project/Library/Artifacts/94/94474579a7dabbb7cb2d8e5992fce75f filter=lfs diff=lfs merge=lfs -text
 /My[[:space:]]project/Library/Artifacts/dc/dc21b5516989ea4df69762dce5cfac66 filter=lfs diff=lfs merge=lfs -text
+/My[[:space:]]project/Library/Artifacts/5c/5ce7af24120b646fc40d5058c31ae15a filter=lfs diff=lfs merge=lfs -text
 * !text !filter !merge !diff
