@@ -1,45 +1,63 @@
 using System.Collections.Generic;
 public class StreamingSystem : MonoBehaviour
 {
-    public int pooliteration; 
-    public int poolSize; 
-    public int refreshTime; 
-    [SerializeField]
-    public GameObject storedObject; 
-    [SerializeField]
-    public List<GameObject> pool;
     
+    public GameObject chunkObject;
+    public Dictionary<Vector2Int, GameObject> loadedChunks;
+    public Dictionary<Vector2Int, int> seed; 
+    public GameObject player;
+    public int chunkRadius; 
+    public int x;
+    public int y;
+    public int chunkSize; 
     void Start() 
     {
-        pooledObjects = new List<GameObject>;
+        chunks = new Dictionary<Vector2Int, GameObject>();
+        for(int i = 0; i <= chunkRadius; i++)
+        {
+            GameObject b = new GameObject(chunkObject, new Vector3(0, 0, 0), Quaternion.Identity); 
+            b.SetActive(false);
+            x += 1;
+            y += 1;
+            loadedChunks.Add(new Vector2Int(x, y), b);
+        }
+    }
+    void FixedUpdate()
+    { 
+        if(x * chunkSize < (int)player.transform.position.x && y * chunkSize < (int)player.transform.position.z)
+        {
+            RefreshPool();
+        }
+        LevelOfDetail();
+    }
+    public async void LevelOfDetail() 
+    {
+        await UnityEngine.Awaitable.BackgroundThreadAsync();
+        foreach(var loaded_object in loadedChunks)
+        {
+            float dist = Vector3.Distance(new Vector3(loaded_object.Key.x, loaded_object.Key.y, 0), player.transform.position)
+            // Implement folieated rendering here.. later...
+        }
+    }
+    public async void RefreshPool() 
+    {
+        await UnityEngine.Awaitable.BackgroundThreadAsync();
+        foreach(var a_object in loadedChunks)
+        {
+            Destroy(a_object.value);
+        }
         for(int i = 0; i <= poolSize; i++)
         {
-            GameObject b = new GameObject(storedObject, new Vector3(0, 0, 0), Quaternion.Identity);
+            GameObject b = new GameObject(chunkObject, new Vector3(0, 0, 0), Quaternion.Identity);
             b.SetActive(false);
-            pool.Add(b);
+            x += 1;
+            y += 1;
+            loadedChunks.Add(new Vector2Int(x, y), b);
         }
+        await UnityEngine.Awaitable.MainThreadAsync();
     }
-    void RefreshPool() 
+    GameObject obtainObject(Vector2Int index)
     {
-        foreach(GameObject a_object in pool)
-        {
-            Destroy(a_object);
-        }
-        for(int i = 0; i <= poolSize; i++)
-        {
-            GameObject b = new GameObject(storedObject, new Vector3(0, 0, 0), Quaternion.Identity);
-            b.SetActive(false);
-            pool.Add(b);
-        }
-    }
-    IEnumerator RefreshPoolTask()
-    {
-        yield return new WaitForSeconds(refreshTime);
-        RefreshPool();
-        StartCouroutine("RefreshPoolTask");
-    }
-    GameObject obtainObject(int index)
-    {
-        return pool.get(index);
+        return loadedChunks.get(index);
     }
 }
