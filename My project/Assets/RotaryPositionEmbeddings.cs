@@ -2,10 +2,9 @@ public class RotaryPositionEmbeddings : MonoBehaviour
 {
     public float ropeFactor;
     public float[] data;
-    public int dim_size;
-    public float[] getRotations(float[] array, int position) 
+    public float[] getRotations(int dim_size, int position) 
     {
-        float[] b = new float[2 * array.Length];
+        float[] b = new float[array.Length];
         float sum = 0;
         foreach(float item in data)
         {
