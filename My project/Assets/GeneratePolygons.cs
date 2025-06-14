@@ -28,7 +28,7 @@ public class GeneratePolygonMap : MonoBehaviour()
             item = Mathf.Floor(Random.Range(a, a + b));
         }
     }
-    float[] centroidPartition(float[] givenPoints)
+    float centroidPartition(float[] givenPoints)
     {
         int v = 0;
         float summa = 0;
@@ -106,7 +106,7 @@ public class GeneratePolygonMap : MonoBehaviour()
             this.v2 = new Edge(b, c);
             this.v3 = new Edge(a, c);
         }
-        public float obtainCircumCircle(Vertice k)
+        public void obtainCircumCircle(Vertice k)
         {
             Vertice z = CircumcenterTriangle();
             double dx = z.x - k.x;
@@ -138,10 +138,117 @@ public class GeneratePolygonMap : MonoBehaviour()
         double v_c = new Vertice(max_x + dx, max_y + dy);
         return new Triangle(v_a, v_b, v_c);
     }
-    public double[] Triangulate(Vertice[] vertices, int size)
+    public double[] Triangulate(Vertice[] vertices)
     {
         Triangle superTriangle = createSuperTriangle(vertices);
         Triangle[] triangles = [superTriangle];
-        
+        Triangle badTriangles; 
+        Triangle[] triangulation;
+        foreach(Vertice b: vertices)
+        {
+            badTriangles = [];
+            int indice = 0; 
+            foreach(Triangle a2: triangles)
+            {
+                Vertice k = a.getCircumcenterTriangle();
+                Matrix4x4 matrix = new Matrix4x4();
+                matrix[0, 0] = a.v0.x;
+                matrix[0, 1] = a.v0.y;
+                matrix[0, 2] = (a.v0.x ** 2) + (a.v0.y ** 2);
+                matrix[0, 3] = 1;
+                matrix[1, 3] = 1;
+                matrix[2, 3] = 1;
+                matrix[3, 3] = 1;
+                matrix[1, 0] = a.v0_1.x;
+                matrix[1, 1] = a.v0_1.y;
+                matrix[1, 2] = (a.v0_1.x ** 2) + (a.v0_1.y ** 2);
+                matrix[2, 0] = a.v0_2.x;
+                matrix[2, 1] = a.v0_2.y;
+                matrix[2, 2] = (a.v0_2.x ** 2) + (a.v0_2.y ** 2);
+                matrix[3, 0] = k.x;
+                matrix[3, 1] = k.y;
+                matrix[3, 2] = (k.x ** 2) + (k.y ** 2);
+                matrix[3, 3] = 1;
+                float det = matrix.determinant; 
+                if(det > 0)
+                {
+                    indice++;
+                    badTriangles[indice] = a;
+                }
+            }
+            Edge[] polygon = [];
+            int indice = 0;
+            foreach(Triangle b1: triangles)
+            {
+                bool equalityone = false;
+                bool equalitytwo = false;
+                bool equalitythree = false;
+                foreach(Triangle c: badTriangles)
+                {
+                    if(c.v1 == b.v1)
+                    {
+                        equalityone = true;
+                    }
+                    if(c.v2 == b.v2)
+                    {
+                        equalitytwo = true;
+                    }
+                    if(c.v3 == b.v3)
+                    {
+                        equalitythree = true;
+                    }
+                }
+                if(equalityone == false)
+                {
+                    indice++;
+                    polygon[indice] = b.v1;
+                }
+                if(equalitytwo == false)
+                {
+                    indice++;
+                    polygon[indice] = b.v2;
+                }
+                if(equalitythree == false)
+                {
+                    indice++;
+                    polygon[indice] = b.v3;
+                }
+            }
+            triangulation = [];
+            int indice = 0;
+            foreach(Triangle a1: triangles)
+            {
+                bool equality = false;
+                foreach(Triangle b: badTriangles)
+                {
+                    if(b == a)
+                    {
+                        equality = true;
+                    }
+                }
+                if(equality != true)
+                {
+                    indice++;
+                    triangulation[indice] = a;
+                }
+            }
+            foreach(Edge j: polygon)
+            {
+                Triangle k = new Triangle(j.a, j.b, b);
+                indice++;
+                triangulation[indice] = k;
+            }
+        }
+        Triangle[] newTriangulation = [];
+        int indice = 0;
+        foreach(Triangle z: triangulation)
+        {
+            if(z.v1 != superTriangle.v1 && z.v2 != superTriangle.v2 && z.v3 != superTriangle.v3)
+            {
+                indice++;
+                newTriangulation[indice] = z;
+            }
+        }
+        return newTriangulation;
     }
 }
