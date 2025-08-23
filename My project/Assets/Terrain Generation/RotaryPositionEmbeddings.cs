@@ -1,7 +1,8 @@
+// Embed Matrix Meanings/Nuance
 using Unity;
 using UnityEngine;
 using System.Collections.Generic; 
-public class RotaryPositionEmbeddings:MonoBehaviour 
+public class RotaryPositionEmbeddings : MonoBehaviour 
 {
     public float ropeFactor;
     public float[] data;
