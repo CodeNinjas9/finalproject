@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 public class StreamingSystem : MonoBehaviour
 {
-    
     public GameObject chunkObject;
     public Dictionary<Vector2Int, GameObject> loadedChunks;
     public Dictionary<Vector2Int, int> seed; 

@@ -1,16 +1,8 @@
 using Unity;
 using UnityEngine;
 using System.Collections.Generic;
-public class GeneratePolygonMap : MonoBehaviour() 
+public class GeneratePolygonMap : MonoBehaviour
 { 
-    void Start()
-    {
-
-    }
-    void Update()
-    {
-
-    }
     float[] generatePolygonMap(float a, float b)
     {
         float[] map = new float[a + b];

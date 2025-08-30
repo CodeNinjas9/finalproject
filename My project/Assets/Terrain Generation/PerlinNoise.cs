@@ -35,19 +35,34 @@ public class PerlinNoise: MonoBehaviour{
     {
         return (x1 * x2) + (y1 * y2) + (z1 * z2); // returns dot_product
     }
-    public static void noise(float x, float y, float z, int grid_size) 
+    public static void noise(float x, float y, float z, int grid_size=8) 
     {
         int X = (int)(x / grid_size); // Corner points
         int Y = (int)(y / grid_size); 
         int Z = (int)(z / grid_size);
         float u = diff_fade(x);
+        float v = diff_fade(y);
+        float w = diff_fade(z);
         ox = (x - X); // Offset vector calculation
         oy = (y - Y);
         oz = (z - Z);
         gx, gy = gradient((float)X);
         gx1, gy1 = gradient((float)Y);
         gx2, gy2 = gradient((float)Z);
-        return lerp(u, dot_product(ox, gx, oy, gy, oz, gx2), dot_product(ox, gx1, oy, gy1, oz, gy2), dot_product(ox, gx2, oy, gy2, oz, gx));
+        return lerp(w, lerp(v, lerp(u, dot_product(ox, gx, oy, gy, oz, gx2), dot_product(ox, gx1, oy, gy1, oz, gy2), dot_product(ox, gx2, oy, gy2, oz, gx)), u), v);
+    }
+    float fractal_brownian_motion(float x, float y, float z, int numOctatves)
+    {
+        float result = 0.0;
+        float amplitude = 0.5;
+        float frequency = 1.;
+        for(int i = 0; i < numOctatves; i++)
+        {
+            result += (amplitude * noise(frequency * x, frequency *y, frequency * z, grid_size));
+            amplitude *= 2.0;
+            frequency *= 0.5;
+        }
+        return result;
     }
     public int clamp(float lowerlimit, float upperlimit)
     {
