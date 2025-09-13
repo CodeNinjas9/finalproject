@@ -2,7 +2,7 @@
 using Unity;
 using UnityEngine;
 using System.Collections.Generic;
-public class ConwayGameOfLife: MonoBehaviour
+public class CelluarAutomata: MonoBehaviour
 {
     float entropy = 0f;
     float latestDensity = 0f;

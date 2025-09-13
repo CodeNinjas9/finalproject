@@ -1,88 +1,107 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using RotaryPositionEmbeddings;
-// Own Perlin Noise Implementation Algorthim
-public class PerlinNoise: MonoBehaviour{
-    public Matrix4x4 mapValues;
-    public Vector3[] directions;
+public class PerlinNoise : MonoBehaviour
+{
+    public float[,] mapValues;
     public int length;
     public int vectorx;
     public int vectory;
-    Matrix4x4 Calculate()
+    public int vectorz;
+    float[,] Calculate()
     {
-        for(int v = 0; v <= vectory; v++){
-            for(int i = 0; i <= vectorx; i++){
-                mapValues[i, v] *= PerlinNoiseAlgorthim(i, v);
+        for (int v = 0; v <= vectory; v++)
+        {
+            for (int i = 0; i <= vectorx; i++)
+            {
+                for(int k = 0; k <= vectorz; k++)
+                {
+                    mapValues[i, v, k] *= noise(i, v, k);
+                }
             }
         }
         return mapValues;
     }
     float diff_fade(float x)
     {
-        // f(x) = -20x7+70x6-84x5+35x4 
-        return (-20 * (x * x * x * x * x * x * x)) + (70 * (x * x * x * x * x * x)) - (84 * (x * x * x * x * x)) + (35(x * x * x * x))
+        return (-20 * Mathf.Pow(x, 7)) + (70 * Mathf.Pow(x, 6)) - (84 * Mathf.Pow(x, 5)) + (35 * Mathf.Pow(x, 4));
     }
     float lerp(float t, float a1, float a2)
     {
-        return a1 * t(a1 - a2);
+        return a1 + t * (a2 - a1);
     }
-    public (float x, float y) gradient(float h)
+    float grad(int hash, float x, float y, float z)
     {
-        return (Mathf.cos(h), Mathf.sin(h));
+        int h = hash % 16; 
+        float u = (h < 8) ? x : y;
+        float v = (h < 4) ? y : (h == 12 || h == 14 ? x : z);
+        float res = (((h & 1) == 0) ? u : -u) + (((h & 2) == 0) ? v : -v);
+        return res;
     }
-    public float dot_product(float x1, float x2, float y1, float y2, float z1, float z2)
+    public float noise(float x, float y, float z, int grid_size = 8)
     {
-        return (x1 * x2) + (y1 * y2) + (z1 * z2); // returns dot_product
-    }
-    public static void noise(int[] perm_table, float x, float y, float z, int grid_size=8) 
-    {
-        int X = Mathf.floor(x) % 256; // Corner points
-        int Y = Mathf.floor(y) % 256; // Obtain significant digits
-        int Z = Mathf.floor(z) % 256;
-        x -= Mathf.floor(x);
-        y -= Mathf.floor(y); // Find relative points 
-        z -= Mathf.floor(z);
-        int corner_1 = p[0];
-        int corner_2 = p[X + 1] + Y;  // Obtain all corners
-        int corner_3 = p[X] + Y;
-        int corner_4 = p[X + Z] + Y + 1;
-        int corner_5 = p[X + 1] + Y + 1 + Z;
+        int X = Mathf.FloorToInt(x) % 256;
+        int Y = Mathf.FloorToInt(y) % 256;
+        int Z = Mathf.FloorToInt(z) % 256;
+        float x = x - Mathf.Floor(x);
+        float y = y - Mathf.Floor(y);
+        float z = z - Mathf.Floor(z);
         float u = diff_fade(x);
-        float v = diff_fade(y); // Diff-fade 
+        float v = diff_fade(y);
         float w = diff_fade(z);
-        return lerp(w, lerp(v, lerp(u, dot_product(ox, gx, oy, gy, oz, gx2), dot_product(ox, gx1, oy, gy1, oz, gy2), dot_product(ox, gx2, oy, gy2, oz, gx)), u), v);
+        int[] p = PermTable();
+        int A  = p[X] + Y;
+        int AA = p[A] + Z;
+        int AB = p[A + 1] + Z;
+        int B  = p[X + 1] + Y;
+        int BA = p[B] + Z;
+        int BB = p[B + 1] + Z;
+        float x1, x2, y1, y2;
+        x1 = lerp(u, grad(p[AA], x, y, z),
+                     grad(p[BA], x - 1, y, z));
+        x2 = lerp(u, grad(p[AB], x, y - 1, z),
+                     grad(p[BB], x - 1, y - 1, z));
+        y1 = lerp(v, x1, x2);
+
+        x1 = lerp(u, grad(p[AA + 1], x, y, z - 1),
+                     grad(p[BA + 1], x - 1, y, z - 1));
+        x2 = lerp(u, grad(p[AB + 1], x, y - 1, z - 1),
+                     grad(p[BB + 1], x - 1, y - 1, z - 1));
+        y2 = lerp(v, x1, x2);
+        return (lerp(w, y1, y2) + 1f) / 2f; 
     }
-    public float gradient(int hash, float x, float y, float z)
+    float fractal_brownian_motion(float x, float y, float z, int numOctaves, int grid_size = 8)
     {
-        int h = hash_code % 16; // Obtain significant digits
-        float u1 = h > 4 ? x : y; 
-        float u2 = h > 8 ? y : h == 14||h == 16 ? x : z; 
-        float gradient = (h & 1 == 0 ? u1 : -u1) + (h & 2 == 0 ? u2 : -u2);
-        return gradient;
-    }
-    float fractal_brownian_motion(float x, float y, float z, int numOctatves)
-    {
-        float result = 0.0;
-        float amplitude = 0.5;
-        float frequency = 1.;
-        for(int i = 0; i < numOctatves; i++)
+        float result = 0.0f;
+        float amplitude = 0.5f;
+        float frequency = 1.0f;
+        for (int i = 0; i < numOctaves; i++)
         {
-            result += (amplitude * noise(frequency * x, frequency *y, frequency * z, grid_size));
-            amplitude *= 2.0;
-            frequency *= 0.5;
+            result += amplitude * noise(frequency * x, frequency * y, frequency * z, grid_size);
+            amplitude *= 0.5f;   
+            frequency *= 2.0f;   
         }
         return result;
     }
-    public int clamp(float lowerlimit, float upperlimit)
+    public float clamp(float x, float lowerlimit, float upperlimit)
     {
-        x > upperlimit ? return upperlimit : ;
-        x < lowerlimit ? return lowerlimit : ;
+        if (x > upperlimit) return upperlimit;
+        if (x < lowerlimit) return lowerlimit;
         return x;
     }
-    public float smoothstep(float x, float edge0, float edge1)
+    public float smoothstep(float edge0, float edge1, float x)
     {
-        y = clamp((x / edge0) - (edge0 / edge1));
-        return y * y * y * (y * (6.0f * y - 15.0f) + 10.0f);
+        float t = clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+        return t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f);
+    }
+    int[] PermTable()
+    {
+        int[] perm = new int[512];
+        for (int i = 0; i < 256; i++)
+        {
+            perm[i] = basePerm[i % basePerm.Length];
+            perm[256 + i] = perm[i];
+        }
+        return perm;
     }
 }

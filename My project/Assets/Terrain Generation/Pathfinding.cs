@@ -5,11 +5,10 @@ public class Pathfinding: MonoBehaviour
 {
     public class Node
     {
-        public Vector3 worldPosition; 
         public boolean isWalkable;
         public float gridX;
         public float gridY;
-        public Node(Vector3 worldPosition, float gridX, float gridY)
+        public Node(float gridX, float gridY)
         {
             this.gridX = gridX;
             this.gridY = gridY;
