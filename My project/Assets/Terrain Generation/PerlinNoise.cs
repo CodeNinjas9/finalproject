@@ -35,21 +35,31 @@ public class PerlinNoise: MonoBehaviour{
     {
         return (x1 * x2) + (y1 * y2) + (z1 * z2); // returns dot_product
     }
-    public static void noise(float x, float y, float z, int grid_size=8) 
+    public static void noise(int[] perm_table, float x, float y, float z, int grid_size=8) 
     {
-        int X = (int)(x / grid_size); // Corner points
-        int Y = (int)(y / grid_size); 
-        int Z = (int)(z / grid_size);
+        int X = Mathf.floor(x) % 256; // Corner points
+        int Y = Mathf.floor(y) % 256; // Obtain significant digits
+        int Z = Mathf.floor(z) % 256;
+        x -= Mathf.floor(x);
+        y -= Mathf.floor(y); // Find relative points 
+        z -= Mathf.floor(z);
+        int corner_1 = p[0];
+        int corner_2 = p[X + 1] + Y;  // Obtain all corners
+        int corner_3 = p[X] + Y;
+        int corner_4 = p[X + Z] + Y + 1;
+        int corner_5 = p[X + 1] + Y + 1 + Z;
         float u = diff_fade(x);
-        float v = diff_fade(y);
+        float v = diff_fade(y); // Diff-fade 
         float w = diff_fade(z);
-        ox = (x - X); // Offset vector calculation
-        oy = (y - Y);
-        oz = (z - Z);
-        gx, gy = gradient((float)X);
-        gx1, gy1 = gradient((float)Y);
-        gx2, gy2 = gradient((float)Z);
         return lerp(w, lerp(v, lerp(u, dot_product(ox, gx, oy, gy, oz, gx2), dot_product(ox, gx1, oy, gy1, oz, gy2), dot_product(ox, gx2, oy, gy2, oz, gx)), u), v);
+    }
+    public float gradient(int hash, float x, float y, float z)
+    {
+        int h = hash_code % 16; // Obtain significant digits
+        float u1 = h > 4 ? x : y; 
+        float u2 = h > 8 ? y : h == 14||h == 16 ? x : z; 
+        float gradient = (h & 1 == 0 ? u1 : -u1) + (h & 2 == 0 ? u2 : -u2);
+        return gradient;
     }
     float fractal_brownian_motion(float x, float y, float z, int numOctatves)
     {
