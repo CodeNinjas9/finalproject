@@ -1,6 +1,5 @@
 public class ImprovedGameOfLife: MonoBehaviour
 {
-    ulong bitstring;
     ulong[] gameOfLife(ulong[] bitstring, int iters, int elements, int row_size)
     {
         ulong[] new_array = bitstring;

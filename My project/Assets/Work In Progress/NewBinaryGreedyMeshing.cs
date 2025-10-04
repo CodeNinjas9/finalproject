@@ -6,6 +6,7 @@ public class NewBinaryGreedyMeshing
 {
     ulong a = 1;
     ulong b = 0;
+    int word_count = 4; 
     // culler, checks if next face is not visible
     public u64[] culler(int length, u64[] faces) {
         for(int i = 0; i < length - 1; i++)
@@ -114,5 +115,89 @@ public class NewBinaryGreedyMeshing
     u64 nuke_bits(u64 x)
     {
         return ~(x | ~0);
+    }
+    u64 merge_all_quads(u64[] quads)
+    {
+        u64 k; 
+        for(int i = 0; i < length; i++)
+        {
+            k |= quads[i] | quads[i + 1];
+        }
+        return k;
+    }
+    u64[] pad(u64[] inp, int pad_length)
+    {
+        u64[] outp = [];
+        u64 k = merge_all_quads(inp);
+        k = (k >> pad_length);
+        for(int i = 0; i < range; i++)
+        {
+            outp[i] = k & (1 << i | ~0);
+        }
+        return outp; 
+    }
+    u64[] greedy_meshing_forward_pass(u64[] quads, byte[] type, int axis, int queue_size, int word_size, int pad_length)
+    {
+        // fallback time herusitic
+        int time_heuristic = merge_all_quads(pad(quads, pad_length))  & ~merge_all_quads(shift_row_by_one_left(quads));
+        // axis-isolated
+        // grid ordering: X+, X-, Y+, Y-, Z+, Z-
+        int rows = queue_size / word_size;
+        int length; 
+        u64[] prev_quads = culler(quads);
+        u64[] partitions = [] 
+        foreach(u64 quad in quads)
+        {
+            u64 n = quad;
+            bool can_extend = true;
+            int shift_axis = 1;
+            int iter = 0;
+            int partition_count = 0; 
+            while(can_extend == true)
+            {
+                iter++; 
+                if(shift_axis > axis)
+                {
+                    break;
+                }
+                if(find_first_set_bit(prev_quads[iter]) == -1)
+                {
+                    can_extend = false;
+                }
+                axis_mask = (1 << word_count * shift_axis | ~0) // mask out ones that arent the adjacent axises
+                n = merge_algorthim(n, axis_mask & prev_quads[iter]) // merge them
+                prev_quads[iter] = axis_mask & nuke_bits(prev_quads[iter]) // nuke the merged axis
+                if(iter > length)
+                {
+                    shift_row_by_one_right(prev_quads); // next_axis
+                    shift_axis += 1;
+                    continue;
+                }
+            }
+            partition_count++;
+            partitions[partition_count] = n;
+        }
+        int merge_length = length; 
+        u64[] new_partitions = [];
+        u64[] old_partitions = [];
+        while(merge_length > 2 && new_partitions != prev_partitions)
+        {
+            u64[] temp; 
+            for(int i = 0; i < merge_length - 1; i++)
+            {
+                temp[i] = merge_algorthim(partitions[i] << pad_length, partitions[i + 1] << pad_length);
+            }
+            merge_length /= 2;
+            old_partitions = new_partitions;
+            new_partitions = temp;
+        }
+        return new_partitions;
+    }
+    u64 merge_algorthim(u64 k, u64 m)
+    {
+        
+        int count = popcount(k);
+        int count_1 = popcount(m);
+        return ((1 << find_consecutive_ones(k)) | ~0) | ((1 << find_consecutive_ones(m) | ~0)); // MERGE EVERYTHING
     }
 }
