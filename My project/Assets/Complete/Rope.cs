@@ -15,15 +15,6 @@ float rope_mask_3d(int x, int y, int z, float[] freqs, int max_len)
     float mz = rope_mask_scalar(z, freqs, max_len);
     return (mx + my + mz) / 3.0f;  
 }
-float arange(int start, int len, int step)
-{
-    float[] x; 
-    for(int i = start; i < len; i += step)
-    {
-        x[i] = i; 
-    }
-    return x;
-}
 float clamp(float x, float max, float min)
 {
     if(x < min) {return min;}
