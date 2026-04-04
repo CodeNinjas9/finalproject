@@ -71,11 +71,22 @@ public class NewBinaryGreedyMeshing : MonoBehaviour
     public int FindFirstSetBit(u64 x)
     {
         if (x == 0) return -1;
-        return TrailingZeroCount();
+        return TrailingZeroCount(x);
     }
-    public int TrailingZeroCount()
+    public int TrailingZeroCount(u64 b)
     {
-        return 0; 
+        int count = 0; 
+        if(b == 0){
+            return 64;
+        }
+        else{
+            while((b & 1UL) == 0)
+            {
+                b = b >> 1;
+                count++;
+            }
+        }
+        return count; 
     }
     public u64 NukeBits(u64 x) => 0;
     public void GreedyMesh2D(u64[][] slice, int H, int W)
@@ -88,9 +99,8 @@ public class NewBinaryGreedyMeshing : MonoBehaviour
                 u64 bits = slice[y][word];
                 while (bits != 0)
                 {
-                    int bit = TrailingZeroCount();
+                    int bit = TrailingZeroCount(bits);
                     int x = word * 64 + bit;
-
                     if (used[y, x])
                     {
                         bits &= bits - 1;

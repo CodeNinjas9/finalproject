@@ -2,26 +2,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+namespace PerlinN
+{
 public class PerlinNoise : MonoBehaviour
 {
-    public float[,,] mapValues;
     public int length;
-    public int vectorx;
-    public int vectory;
-    public int vectorz;
-    float[,,] Calculate()
+    public int[] permTable;
+    public List<int> perm;
+    public bool[] chosen;
+    public int iterCount;
+    void Start()
     {
-        for (int v = 0; v <= vectory; v++)
-        {
-            for (int i = 0; i <= vectorx; i++)
+        chosen = new bool[256];
+        perm = new List<int>(256);
+        iterCount = 12;
+        search(0);
+    }
+    public void search(int iters) {
+        if (perm.Count == 256) 
+        { 
+            if(iters == iterCount)
             {
-                for(int k = 0; k <= vectorz; k++)
-                {
-                    mapValues[i, v, k] *= noise(i, v, k);
-                }
+                return; 
+            }
+            iters++;
+        } 
+        else {
+            for (int i = 0; i < 256; i++) {
+                if (chosen[i]) continue; 
+                chosen[i] = true; 
+                perm.Add(i); 
+                search(iters); 
+                chosen[i] = false;  
+                perm.RemoveAt(perm.Count - 1); 
             }
         }
-        return mapValues;
     }
     float diff_fade(float x)
     {
@@ -50,7 +65,7 @@ public class PerlinNoise : MonoBehaviour
         float u = diff_fade(x);
         float v = diff_fade(y);
         float w = diff_fade(z);
-        int[] p = PermTable();
+        int[] p = permTable;
         int A  = p[X] + Y;
         int AA = p[A] + Z;
         int AB = p[A + 1] + Z;
@@ -71,7 +86,7 @@ public class PerlinNoise : MonoBehaviour
         y2 = lerp(v, x1, x2);
         return (lerp(w, y1, y2) + 1f) / 2f; 
     }
-    float fractal_brownian_motion(float x, float y, float z, int numOctaves, int grid_size = 8)
+    float fractal_brownian_motion(float x, float y, float z, int numOctaves = 5, int grid_size = 8)
     {
         float result = 0.0f;
         float amplitude = 0.5f;
@@ -95,14 +110,15 @@ public class PerlinNoise : MonoBehaviour
         float t = clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
         return t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f);
     }
-    int[] PermTable()
+    public void PermTable(int[] p = null)
     {
         int[] perm = new int[512];
         for (int i = 0; i < 256; i++)
         {
-            perm[i] = perm[i % perm.Length];
-            perm[256 + i] = perm[i];
+            perm[i] = p[i % p.Length];
+            perm[256 + i] = p[i];
         }
-        return perm;
+        permTable = perm; 
     }
+}
 }
