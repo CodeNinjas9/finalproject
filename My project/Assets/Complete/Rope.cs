@@ -3,7 +3,7 @@ public class Rope {
 float rope_mask_scalar(int pos, float[] freqs, int max_len) {
     float sum = 0.0f;
     for (int i = 0; i < freqs.size(); i++) {
-        float theta = pos * freqs[i] * Math.pow(float(pos)/float(max_len)*2.0f + 1e-6f, 0.25f);
+        float theta = pos * freqs[i] * Math.pow((float)(pos)/(float)(max_len)*2.0f + 1e-6f, 0.25f);
         sum += (cosf(theta) + 1.0f) * 0.5f;  
     }
     return sum / freqs.size();
