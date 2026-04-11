@@ -368,6 +368,7 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.49f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.49f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/BKM.cs"
+"Assets/bms.cs"
 "Assets/BulidPermTables.cs"
 "Assets/ChunkGeneration.cs"
 "Assets/Convolution.cs"
@@ -378,6 +379,8 @@
 "Assets/QEMMeshSimplifier.cs"
 "Assets/Rope.cs"
 "Assets/VIT.cs"
+"Assets/VoxelChunk.cs"
+"Assets/WorldManager.cs"
 -langversion:9.0
 /deterministic
 /optimize+
