@@ -30,6 +30,15 @@ public class bms: MonoBehaviour
         }
         return ctn;
     }
+
+    public VoxelGrid faceCulling(VoxelGrid a, int len)
+    {
+        for(int i = 0; i < len - 1; i++)
+        {
+            a.bits[i] &= a.bits[i + 1];
+        }
+        return new VoxelGrid {bits = a.bits, blocktype = a.blocktype};
+    }
     public List<(uint a, uint b, uint c, uint d)> greedySilce(VoxelGrid a, int m1, int m2)
     {
         List<(uint a, uint b, uint c, uint d)> k = new();
