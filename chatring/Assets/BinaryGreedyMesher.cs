@@ -8,7 +8,7 @@ using System.Data;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
 
-public class bms: MonoBehaviour
+public class BinaryGreedyMesher: MonoBehaviour
 {
     
     [System.Serializable]
@@ -31,11 +31,11 @@ public class bms: MonoBehaviour
         return ctn;
     }
 
-    public VoxelGrid faceCulling(VoxelGrid a, int len)
+    public VoxelGrid faceCulling(VoxelGrid a, VoxelGrid b, int len)
     {
         for(int i = 0; i < len - 1; i++)
         {
-            a.bits[i] &= a.bits[i + 1];
+            a.bits[i] &= ~b.bits[i + 1];
         }
         return new VoxelGrid {bits = a.bits, blocktype = a.blocktype};
     }
