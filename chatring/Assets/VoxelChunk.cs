@@ -101,7 +101,7 @@ public static class BlockRegistry
 
 public class VoxelChunk : MonoBehaviour
 {
-    public const int ChunkSize = 16;
+    public const int ChunkSize = 32;
     public const float TileSize = 0.0625f; 
 
     private Voxel[,,] voxels = new Voxel[ChunkSize, ChunkSize, ChunkSize];
@@ -348,7 +348,6 @@ public class VoxelChunk : MonoBehaviour
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
         mf.mesh = def.customMesh;
         mr.material = new Material(Shader.Find("Standard"));
-
         customMeshObjects.Add(go);
     }
 

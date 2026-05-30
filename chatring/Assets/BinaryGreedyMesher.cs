@@ -39,6 +39,21 @@ public class BinaryGreedyMesher: MonoBehaviour
         }
         return new VoxelGrid {bits = a.bits, blocktype = a.blocktype};
     }
+    public void buildRepr(int len)
+    {
+        uint[] k = new();
+        uint[] k_masks = new();
+        for(int y = 0; y < len + 2; y++)
+        {
+            for(int x = 0; x < len + 2; x++)
+            {
+                for(int z = 0; z < len + 2; z++)
+                {
+                    
+                }
+            }
+        }
+    }
     public List<(uint a, uint b, uint c, uint d)> greedySilce(VoxelGrid a, int m1, int m2)
     {
         List<(uint a, uint b, uint c, uint d)> k = new();
@@ -71,6 +86,7 @@ public class BinaryGreedyMesher: MonoBehaviour
                     w+=1;
                 }
                 k.Add(((uint)y , (uint)h, (uint)w, i)); 
+                y += h;
             }
         }
         return k;
