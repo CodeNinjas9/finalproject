@@ -29,19 +29,11 @@ public class WorldManager : MonoBehaviour
         k.AddComponent<Transform>();
         k.transform.position = new Vector3(Mathf.Floor(player.transform.position.x + offsetX * 16), Mathf.Floor(player.transform.position.y + offsetY * 16), Mathf.Floor(player.transform.position.z + offsetZ * 16));
         k.AddComponent<VoxelChunk>();
+        k.AddComponent<VoxelGrid>();
         chunkList.Append(k);
     }
-    IEnumerator<WaitForSeconds> GenerateChunks()
+    void Start()
     {
-        yield return new WaitForSeconds(2f);
-        GenerateChunk(1, 0, 0);
-        GenerateChunk(-1, 0, 0);
         GenerateChunk(0, 0, 0);
-        GenerateChunk(0, 0, -1);
-        GenerateChunk(0, 0, 1);
-    }
-    void Update()
-    {
-        StartCoroutine(GenerateChunks());
     }
 }

@@ -1,7 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
-
-
+using UnityEngine.UI;
+using System;
+using UnityEngine.Jobs;
+using Unity.Jobs;
+using Unity.Collections;
+using Unity.VisualScripting;
+using System.Linq;
 [System.Serializable]
 public struct Voxel
 {
@@ -174,6 +179,11 @@ public class VoxelChunk : MonoBehaviour
         GenerateTerrain();
         RebuildMesh();
     }
+    void DestroyBlock(int x, int y, int z)
+    {
+        this.SetBlock(x, y, z, 0);
+        RebuildMesh();
+    }
     public Voxel GetVoxel(int x, int y, int z)
     {
         if (x < 0 || x >= ChunkSize ||
@@ -201,6 +211,62 @@ public class VoxelChunk : MonoBehaviour
             light    = 15,
             rotation = 0
         });
+    }
+    public struct GenerateTerrain1: IJob
+    {
+        public NativeArray<Voxel> voxels;
+        public float transformPosX;
+        public float transformPosZ;
+        public void Execute()
+        {
+            for (int x = 0; x < ChunkSize; x++)
+        for (int z = 0; z < ChunkSize; z++)
+        {
+            float noise = Mathf.PerlinNoise(
+                (transformPosX + x) * 0.1f,
+                (transformPosZ + z) * 0.1f
+            );
+            int height = Mathf.FloorToInt(noise * ChunkSize);
+
+            for (int y = 0; y < ChunkSize; y++)
+            {
+                byte id;
+                if      (y < height - 3) id = 3; 
+                else if (y < height)     id = 2; 
+                else if (y == height)    id = 1; 
+                else                     id = 0; 
+
+                BlockDefinition def = BlockRegistry.Get(id);
+                voxels.Append(new Voxel
+                {
+                    blockId  = id,
+                    flags    = def.flags,
+                    light    = 15,
+                    rotation = 0
+                });
+
+                
+                if (id == 0 && y == height + 1)
+                {
+                    if (UnityEngine.Random.value < 0.05f)
+                    {
+                        BlockDefinition flower = BlockRegistry.Get(5);
+                        voxels.Append(new Voxel
+                        {
+                            blockId  = 5,
+                            flags    = flower.flags,
+                            light    = 15,
+                            rotation = 0
+                        });
+                    }
+                }
+            }
+        }
+        }
+        int getIndice(int x, int y, int z)
+        {
+              return x + (y * 32) + (z * 32 * 32);  
+        }
     }
     void GenerateTerrain()
     {
@@ -233,7 +299,7 @@ public class VoxelChunk : MonoBehaviour
                 
                 if (id == 0 && y == height + 1)
                 {
-                    if (Random.value < 0.05f)
+                    if (UnityEngine.Random.value < 0.05f)
                     {
                         BlockDefinition flower = BlockRegistry.Get(5);
                         voxels[x, y, z] = new Voxel
@@ -247,6 +313,33 @@ public class VoxelChunk : MonoBehaviour
                 }
             }
         }
+    }
+    Voxel[,,] GenerateTerrainInThread()
+    {
+        NativeArray<Voxel> result = new NativeArray<Voxel>(32 * 32 * 32, Allocator.Temp);
+        float transformPositionX = this.transform.position.x;
+        float transformPositionZ = this.transform.position.z;
+        GenerateTerrain1 terrain1 = new GenerateTerrain1();
+        terrain1.voxels = result;
+        terrain1.transformPosX = transformPositionX;
+        terrain1.transformPosZ = transformPositionZ;
+        JobHandle handle = terrain1.Schedule();
+        handle.Complete();
+        Voxel[] brain = result.ToArray();
+        result.Dispose();
+        Voxel[,,] voxels = new Voxel[32, 32, 32];
+        int indice = 0;
+        for(int i = 0; i < 32; i++)
+        {
+            for(int b = 0; b < 32; b++)
+            {
+                for(int c = 0; c < 32; c++)
+                {
+                    voxels[i, b, c] = brain[indice++];
+                }
+            }
+        }
+        return voxels;
     }
 
 
@@ -368,7 +461,6 @@ public class VoxelChunk : MonoBehaviour
         int offset = opaqueVerts.Count;
         foreach (int t in transTris)
             offsetTransTris.Add(t + offset);
-
         mesh.SetVertices(allVerts);
         mesh.SetUVs(0, allUVs);
         mesh.SetColors(allColors);
@@ -380,4 +472,20 @@ public class VoxelChunk : MonoBehaviour
         meshFilter.mesh     = mesh;
         meshCollider.sharedMesh = mesh;
     }
+    public int trailingZerosCount(uint x)
+    {
+        int ctn = 0;
+        if (x == 0)
+        {
+            return 32;
+        }
+        uint y = x & ~x;
+        while((y <<= 1) > 0)
+        {
+            ctn++;
+        }
+        return ctn;
+    }
+    
+            
 }
