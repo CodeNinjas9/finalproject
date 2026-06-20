@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -7,6 +8,9 @@ using Unity.Jobs;
 using Unity.Collections;
 using Unity.VisualScripting;
 using System.Linq;
+using Unity.Mathematics;
+using PerlinN;
+
 [System.Serializable]
 public struct Voxel
 {
@@ -106,6 +110,7 @@ public static class BlockRegistry
 
 public class VoxelChunk : MonoBehaviour
 {
+    public const uint chunkId = 0; 
     public const int ChunkSize = 32;
     public const float TileSize = 0.0625f; 
 
@@ -212,73 +217,94 @@ public class VoxelChunk : MonoBehaviour
             rotation = 0
         });
     }
-    public struct GenerateTerrain1: IJob
+    public struct GenerateTerrainJob : IJob
+{
+    [WriteOnly] public NativeArray<Voxel> voxels;
+    public float transformPosX;
+    public float transformPosZ;
+
+    public void Execute()
     {
-        public NativeArray<Voxel> voxels;
-        public float transformPosX;
-        public float transformPosZ;
-        public void Execute()
+        for (int x = 0; x < 32; x++)
         {
-            for (int x = 0; x < ChunkSize; x++)
-        for (int z = 0; z < ChunkSize; z++)
-        {
-            float noise = Mathf.PerlinNoise(
-                (transformPosX + x) * 0.1f,
-                (transformPosZ + z) * 0.1f
-            );
-            int height = Mathf.FloorToInt(noise * ChunkSize);
-
-            for (int y = 0; y < ChunkSize; y++)
+            for (int z = 0; z < 32; z++)
             {
-                byte id;
-                if      (y < height - 3) id = 3; 
-                else if (y < height)     id = 2; 
-                else if (y == height)    id = 1; 
-                else                     id = 0; 
-
-                BlockDefinition def = BlockRegistry.Get(id);
-                voxels.Append(new Voxel
+                float2 noiseInput = new float2((transformPosX + x) * 0.1f, (transformPosZ + z) * 0.1f);
+                float noise = Unity.Mathematics.noise.cnoise(noiseInput); 
+                noise = (noise + 1f) * 0.5f; 
+                int height = Mathf.FloorToInt(noise * 32);
+                float normalizedNoise = (noise + 1f) * 0.5f;
+                height = Mathf.Clamp(Mathf.FloorToInt(normalizedNoise * 32), 4, 31);
+                for (int y = 0; y < 32; y++)
                 {
-                    blockId  = id,
-                    flags    = def.flags,
-                    light    = 15,
-                    rotation = 0
-                });
+                    byte id;
+                    byte flags;
 
-                
-                if (id == 0 && y == height + 1)
-                {
-                    if (UnityEngine.Random.value < 0.05f)
+                    if (y < height - 3) { id = 3; flags = 0b00000001; } // Stone
+                    else if (y < height)  { id = 2; flags = 0b00000001; } // Dirt
+                    else if (y == height) { id = 1; flags = 0b00000001; } // Grass
+                    else                  { id = 0; flags = 0b00000000; } // Air
+                    int index = x + (y * 32) + (z * 32 * 32);
+                    voxels[index] = new Voxel
                     {
-                        BlockDefinition flower = BlockRegistry.Get(5);
-                        voxels.Append(new Voxel
-                        {
-                            blockId  = 5,
-                            flags    = flower.flags,
-                            light    = 15,
-                            rotation = 0
-                        });
-                    }
+                        blockId = id,
+                        flags = flags,
+                        light = 15,
+                        rotation = 0
+                    };
                 }
             }
         }
-        }
-        int getIndice(int x, int y, int z)
-        {
-              return x + (y * 32) + (z * 32 * 32);  
-        }
     }
-    void GenerateTerrain()
+}
+    public float getLayeredNoise(float x, float y)
+    {
+        float noise = 0;
+        float frequency = 1;
+        float factor = 1;
+        int octaves = 6;
+        for(int i = 0; i < octaves - 1; i++)
+        {
+            noise += Mathf.PerlinNoise(x * octaves/frequency - i * 0.49848484f * 0.292919192f, y * octaves - i * 0.72354f * 0.192822828f) * factor;  
+            factor *= 0.5f;
+            frequency *= 2;
+        }
+        return noise / 16f;
+    }
+    public struct ChunkData
+    {
+        public uint temperature;
+        public uint heightMap;
+        public uint moisture;
+
+    }
+    public void GenerateTerrain()
     {
         for (int x = 0; x < ChunkSize; x++)
         for (int z = 0; z < ChunkSize; z++)
         {
-            float noise = Mathf.PerlinNoise(
+            float noise = getLayeredNoise(
                 (transform.position.x + x) * 0.1f,
                 (transform.position.z + z) * 0.1f
             );
-            int height = Mathf.FloorToInt(noise * ChunkSize);
-
+            float biome = getLayeredNoise(
+                (transform.position.x + x) * 0.1f,
+                (transform.position.z + z) * 0.1f
+            );
+            float biomeType = 1;
+            if(biome < 0.6)
+            {
+                biomeType *= 0.5f;
+            }
+            else if(biome > 0.6 && biome < 0.8)
+            {
+                biomeType *= 1.2f;
+            }
+            else
+            {
+                biomeType *= 2f;
+            }
+            int height = Mathf.FloorToInt(noise * ChunkSize * biomeType);
             for (int y = 0; y < ChunkSize; y++)
             {
                 byte id;
@@ -314,33 +340,39 @@ public class VoxelChunk : MonoBehaviour
             }
         }
     }
-    Voxel[,,] GenerateTerrainInThread()
+    void GenerateTerrainInThread()
+{
+    // Allocate space for the chunk grid layout (32^3)
+    NativeArray<Voxel> result = new NativeArray<Voxel>(32 * 32 * 32, Allocator.TempJob);
+    
+    GenerateTerrainJob terrainJob = new GenerateTerrainJob
     {
-        NativeArray<Voxel> result = new NativeArray<Voxel>(32 * 32 * 32, Allocator.Temp);
-        float transformPositionX = this.transform.position.x;
-        float transformPositionZ = this.transform.position.z;
-        GenerateTerrain1 terrain1 = new GenerateTerrain1();
-        terrain1.voxels = result;
-        terrain1.transformPosX = transformPositionX;
-        terrain1.transformPosZ = transformPositionZ;
-        JobHandle handle = terrain1.Schedule();
-        handle.Complete();
-        Voxel[] brain = result.ToArray();
-        result.Dispose();
-        Voxel[,,] voxels = new Voxel[32, 32, 32];
-        int indice = 0;
-        for(int i = 0; i < 32; i++)
+        voxels = result,
+        transformPosX = this.transform.position.x,
+        transformPosZ = this.transform.position.z
+    };
+
+    // Schedule and instantly wait for completion
+    JobHandle handle = terrainJob.Schedule();
+    handle.Complete();
+
+    // Safely copy the results back out to our managed array
+    int size = VoxelChunk.ChunkSize;
+    for (int x = 0; x < size; x++)
+    {
+        for (int y = 0; y < size; y++)
         {
-            for(int b = 0; b < 32; b++)
+            for (int z = 0; z < size; z++)
             {
-                for(int c = 0; c < 32; c++)
-                {
-                    voxels[i, b, c] = brain[indice++];
-                }
+                // Ensure loop order math matches perfectly with your Job's index mapping!
+                int index = x + (y * size) + (z * size * size);
+                this.voxels[x, y, z] = result[index];
             }
         }
-        return voxels;
     }
+
+    result.Dispose();
+}
 
 
     public void RebuildMesh()
