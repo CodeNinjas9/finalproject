@@ -258,19 +258,35 @@ public class VoxelChunk : MonoBehaviour
     }
 }
     public float getLayeredNoise(float x, float y)
+{
+    float totalNoise = 0;
+    float amplitude = 1f;
+    float frequency = 1f;
+    float maxAmplitude = 0f; // Track total possible amplitude for perfect 0-1 normalization
+
+    int octaves = 6;
+    float lacunarity = 2.0f;  // Increases frequency each octave
+    float gain = 0.5f;        // Decreases amplitude each octave
+
+    for (int i = 0; i < octaves; i++)
     {
-        float noise = 0;
-        float frequency = 1;
-        float factor = 1;
-        int octaves = 6;
-        for(int i = 0; i < octaves - 1; i++)
-        {
-            noise += Mathf.PerlinNoise(x * octaves/frequency - i * 0.49848484f * 0.292919192f, y * octaves - i * 0.72354f * 0.192822828f) * factor;  
-            factor *= 0.5f;
-            frequency *= 2;
-        }
-        return noise / 16f;
+        // Pseudo-random offset per octave to prevent directional artifacts or "stacking"
+        float offsetX = i * 124.34f;
+        float offsetY = i * 345.67f;
+
+        // Sample Perlin noise (returns 0.0 to 1.0)
+        float noiseSample = Mathf.PerlinNoise(x * frequency + offsetX, y * frequency + offsetY);
+        
+        totalNoise += noiseSample * amplitude;
+        
+        maxAmplitude += amplitude; // Accumulate max possible value
+        frequency *= lacunarity;   // Make next layer more detailed/frequent
+        amplitude *= gain;         // Make next layer have less impact
     }
+
+    // Perfectly normalizes the output to a strict 0.0 - 1.0 range
+    return totalNoise / maxAmplitude;
+}
     public struct ChunkData
     {
         public uint temperature;
@@ -291,6 +307,7 @@ public class VoxelChunk : MonoBehaviour
                 (transform.position.x + x) * 0.1f,
                 (transform.position.z + z) * 0.1f
             );
+            float density = get
             float biomeType = 1;
             if(biome < 0.6)
             {
